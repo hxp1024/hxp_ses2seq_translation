@@ -1,5 +1,5 @@
-from hxp.hxp_models import Encoder, Decoder, Seq2Seq
-from hxp.hxp_data_preprocessing import data_preprocessing
+from hxp_models import Encoder, Decoder, Seq2Seq
+from hxp_data_preprocessing import data_preprocessing
 import hxp_config as config
 import torch
 import torch.nn as nn
