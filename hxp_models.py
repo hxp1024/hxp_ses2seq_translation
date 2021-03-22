@@ -94,7 +94,7 @@ class Decoder(nn.Module):
         # 这里seq_len为1是因为，解码器是一个单词一个单词地预测的，前面的结果影响后面的结果
         # 在seq_seq类中解码器也是每预测一个单词调用一次decoder的forward函数
         input = input.unsqueeze(0)
-        print(input.min(), input.max())
+        # print(input.min(), input.max())
 
         # embedded size=[1, batch_size, emb_dim]
         embedded = self.embedding(input)
