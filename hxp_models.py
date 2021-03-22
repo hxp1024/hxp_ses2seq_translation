@@ -94,6 +94,7 @@ class Decoder(nn.Module):
         # 这里seq_len为1是因为，解码器是一个单词一个单词地预测的，前面的结果影响后面的结果
         # 在seq_seq类中解码器也是每预测一个单词调用一次decoder的forward函数
         input = input.unsqueeze(0)
+        print(input.min(), input.max())
 
         # embedded size=[1, batch_size, emb_dim]
         embedded = self.embedding(input)
@@ -116,13 +117,14 @@ class Decoder(nn.Module):
 
 
 class Seq2Seq(nn.Module):
-    def __init__(self, encoder, decoder, device):
+    def __init__(self, encoder, decoder, device, teach_forcing_ratio):
         super().__init__()
         self.encoder = encoder
         self.decoder = decoder
         self.device = device
+        self.teach_forcing_ratio = teach_forcing_ratio
 
-    def forward(self, src, trg, teacher_forcing_ratio=0.5):
+    def forward(self, src, trg):
         # src = [src len, batch size]
         # trg = [trg len, batch size]
         # teacher_forcing_ratio is probability to use teacher forcing
@@ -154,7 +156,7 @@ class Seq2Seq(nn.Module):
             outputs[t] = output
 
             # decide if we are going to use teacher forcing or not
-            teach = random.random() < teacher_forcing_ratio
+            teach = random.random() < self.teach_forcing_ratio
 
             # get the highest predicted token (index) from our predictions
             # top1 size=[batch_size]

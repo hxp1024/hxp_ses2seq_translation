@@ -54,8 +54,8 @@ def train(model, iterator, optimizer, criterion, clip, model_path):
         sum_loss += loss_i.item()
 
         print(i, loss_i.item())
-        if i % 10 == 0:
-            torch.save(model.state_dict(), model_path)
+        # if i % 10 == 0:
+        #     torch.save(model.state_dict(), model_path)
 
     return sum_loss / len(iterator)
 
@@ -100,7 +100,7 @@ def train_and_save_model(model_path):
     enc = Encoder(INPUT_DIM, config.ENC_EMB_DIM, config.HID_DIM, config.N_LAYERS, config.ENC_DROPOUT)
     dec = Decoder(OUTPUT_DIM, config.DEC_EMB_DIM, config.HID_DIM, config.N_LAYERS, config.DEC_DROPOUT)
 
-    model = Seq2Seq(enc, dec, device).to(device)
+    model = Seq2Seq(enc, dec, device, 0.5).to(device)
 
     model.apply(init_weights)
 
@@ -122,15 +122,16 @@ def train_and_save_model(model_path):
 
 
 def predict_sentence(sentence, model_path):
-
     SRC, TRG, device, train_iterator, valid_iterator, test_iterator = data_preprocessing()
+    device = torch.device('cpu')
+    # SRC = SRC.to(device)
     INPUT_DIM = len(SRC.vocab)
     OUTPUT_DIM = len(TRG.vocab)
 
     enc = Encoder(INPUT_DIM, config.ENC_EMB_DIM, config.HID_DIM, config.N_LAYERS, config.ENC_DROPOUT)
     dec = Decoder(OUTPUT_DIM, config.DEC_EMB_DIM, config.HID_DIM, config.N_LAYERS, config.DEC_DROPOUT)
 
-    model = Seq2Seq(enc, dec, device).to(device)
+    model = Seq2Seq(enc, dec, device, 0).to(device)
     model.load_state_dict(torch.load(model_path))
     model.eval()
 
@@ -143,6 +144,7 @@ def predict_sentence(sentence, model_path):
     print(sentence)
     sentence = sentence.unsqueeze(1)
     print(sentence)
+    # sentence = sentence.to(device)
     src = sentence
     trg = sentence
     output = model(src, trg)
@@ -154,5 +156,5 @@ def predict_sentence(sentence, model_path):
 
 if __name__ == '__main__':
     # train_and_save_model(config.model_path)
-    sentence = "père guilde ordinateur bureau"
+    sentence = 'zwei junge weiße männer sind im freien in der nähe vieler büsche.'
     predict_sentence(sentence, config.model_path)
