@@ -1,0 +1,9 @@
+ENC_EMB_DIM = 256
+DEC_EMB_DIM = 256
+HID_DIM = 512
+N_LAYERS = 2
+ENC_DROPOUT = 0.5
+DEC_DROPOUT = 0.5
+N_EPOCHS = 10
+CLIP = 1
+model_path = './models/hxp_model.pt'
